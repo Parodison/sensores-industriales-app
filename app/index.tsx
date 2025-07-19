@@ -1,128 +1,75 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { Header } from '../components/Header';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import { useState } from 'react';
-import AireSvg from '../assets/svg/aire.svg';
-import TermostatoSvg from '../assets/svg/termostato.svg';
-import GotaSvg from '../assets/svg/gota.svg';
+import CedulaSvg from '../assets/svg/cedula.svg'
+import { iniciarSesion } from '../lib/iniciarSesion';
+import { useRouter } from 'expo-router';
+import { useWebsocket } from '../contexts/WebsocketContext';
+
 
 export default function Home() {
+    const [cedula, setCedula] = useState("");
+    const [iniciandoSesion, setIniciandoSesion] = useState(false);
 
+    const router = useRouter();
+    const {setLogueado} = useWebsocket();
 
-    const sensoresData = [
-        {
-            label: 'Calidad del aire',
-            value: `${300} ppm`,
-            estado: "Bueno",
-            icon: <AireSvg width={40} height={40} fill={"rgb(155, 153, 153)"} />,
-            borderColor: "rgb(155, 153, 153)"
-        },
-        {
-            label: 'Temperatura',
-            value: `${25} °C`,
-            estado: "Normal",
-            icon: <TermostatoSvg width={40} height={40} fill={"rgb(255, 174, 0)"} />,
-            borderColor: "rgb(255, 174, 0)"
-
-        },
-        {
-            label: 'Humedad',
-            value: 60,
-            estado: "Normal",
-            icon: <GotaSvg width={40} height={40} fill={"rgb(0, 89, 255)"} />,
-            borderColor: "rgb(0, 89, 255)"
+    const handleLogin = async () => {
+        setIniciandoSesion(true);
+        const inicioExitoso = await iniciarSesion(Number(cedula));
+        setIniciandoSesion(false);
+        if (inicioExitoso) {
+            console.log("Inicio de sesión exitoso");
         }
-    ]
-
-    const verPorSelector = [
-        {
-            label: "Gráficos normales"
-        },
-        {
-            label: "Gráficos estadísticos"
-        }
-    ]
-
+        setLogueado(true);
+        setIniciandoSesion(false);
+        router.replace("/home");
+    };
 
     return (
         <>
-            <Header />
             <View style={styles.container}>
-                <View style={{ flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                    <Text style={styles.subtitulo}>DATOS EN TIEMPO REAL</Text>
-                    <View
-                        style={{
-                            borderBottomWidth: 1,
-                            width: 300,
-                            alignSelf: "center"
-                        }}
-                    />
-                </View>
-                <View style={styles.verPorContainer}>
-                    <Text
-                        style={{
-                            fontWeight: 600,
-                            fontSize: 16
-                        }}
+                <Text style={styles.mainTitle}>
+                    Bienvenido a la App de Sensores Industriales
+                </Text>
+                <View style={styles.loginForm}>
+                    <View style={styles.textInputContainer}>
+                        <View style={styles.iconContainer}>
+                            <CedulaSvg
+                                width={30}
+                                height={30}
+                                fill={"rgb(117, 117, 117)"}
+                            />
+                        </View>
+
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder='Introduce tu número de cédula'
+                            placeholderTextColor={"rgb(117, 117, 117)"}
+                            keyboardType="numeric"
+                            value={cedula}
+                            onChangeText={(text) => setCedula(text)}
+                        />
+                    </View>
+                    <TouchableOpacity style={styles.loginButton}
+                        onPress={handleLogin}
                     >
-                        Ver por:
-                    </Text>
-                    <TouchableOpacity style={styles.verPorSelector}>
-                        <Text>
-                            Gráficos normales
+                        <Text style={{
+                            textAlign: "center",
+                            color: "white",
+                            fontWeight: "bold",
+                            fontSize: 20,
+                        }}>
+                            {iniciandoSesion ? "" : "Acceder"}
                         </Text>
-                        <Text>
-                            ▼
-                        </Text>
+
+                        {iniciandoSesion &&
+                            <ActivityIndicator
+                                size="small"
+                                color="white"
+                                style={{ position: "absolute" }}
+                            />
+                        }
                     </TouchableOpacity>
-                </View>
-                <View style={styles.sensoresContainer}>
-                    {sensoresData.map((data, index) => (
-                        <TouchableOpacity key={index} style={[styles.sensorCard, { borderColor: data.borderColor }]}>
-
-                            <Text
-                                style={{
-                                    fontSize: 20,
-                                    fontWeight: "bold"
-                                }}
-                            >
-                                {data.label}
-                            </Text>
-
-                            <View style={styles.iconAndValueContainer}>
-                                {data.icon}
-                                <Text
-                                    style={{
-                                        fontSize: 20,
-                                    }}
-                                >
-                                    {data.value}
-                                </Text>
-                            </View>
-
-                            <View style={styles.estadoContainer}>
-
-                                <Text
-                                    style={{
-                                        fontSize: 20,
-                                        fontWeight: "bold"
-                                    }}
-                                >
-                                    Estado:
-                                </Text>
-
-                                <Text
-                                    style={{
-                                        fontSize: 20,
-                                    }}
-                                >
-                                    {data.estado}
-                                </Text>
-
-                            </View>
-
-                        </TouchableOpacity>
-                    ))}
-
                 </View>
             </View>
         </>
@@ -135,56 +82,51 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         backgroundColor: '#fff',
         alignItems: 'center',
+        justifyContent: 'center',
     },
-    subtitulo: {
-        fontSize: 20,
-        fontWeight: "bold",
-        padding: 10,
-        marginTop: 20,
+    mainTitle: {
+        fontSize: 34,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 20,
     },
-    verPorContainer: {
-        flexDirection: "row",
-        alignSelf: "flex-start",
-        marginLeft: 20,
-        marginTop: 10,
-        gap: 7,
-        alignItems: "center",
+    loginForm: {
+        flexDirection: 'column',
+        gap: 20,
     },
-    verPorSelector: {
-        flexDirection: "row",
+    textInputContainer: {
         borderWidth: 1,
-        borderColor: "rgb(131, 131, 131)",
-        borderRadius: 20,
-        padding: 10,
+        borderColor: 'rgb(201, 199, 199)',
+        borderRadius: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: 320,
         gap: 10,
     },
-    sensoresContainer: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 20,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 20,
+    textInput: {
+        width: '100%',
+        height: 50,
+        fontSize: 20,
     },
-    sensorCard: {
+    iconContainer: {
+        width: 50, // o el mismo que el height del TextInput
+        height: 50,
+        backgroundColor: 'rgb(222, 222, 222)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderTopLeftRadius: 10,
+        borderBottomLeftRadius: 10,
+    },
+    loginButton: {
+        width: 300,
+        backgroundColor: 'rgb(0, 122, 255)',
         padding: 10,
-        backgroundColor: "white",
-        borderRadius: 5,
-        elevation: 10,
-        flexDirection: "column",
-        alignItems: "center",
-        borderWidth: 3,
-    },
-    iconAndValueContainer: {
-        paddingTop: 10,
-        paddingBottom: 10,
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10
-    },
-    estadoContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10
+        borderRadius: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10,
+        position: 'relative',
     }
+
 });
