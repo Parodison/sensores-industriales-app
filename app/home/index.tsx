@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Platform, ToastAndroid } from 'react-native';
 import { Header } from '../../components/Header';
 import { useState, useEffect, useMemo } from 'react';
 import AireSvg from '../../assets/svg/aire.svg';
@@ -6,6 +6,7 @@ import TermostatoSvg from '../../assets/svg/termostato.svg';
 import GotaSvg from '../../assets/svg/gota.svg';
 import { useWebsocket } from '../../contexts/WebsocketContext';
 import { sensorData } from '../../types';
+import { getAireStatus, getHumedadStatus, getTemperaturaStatus } from '../../lib/sensorStatusHandler';
 
 interface DatosSensores {
     calidadAire: number;
@@ -24,44 +25,46 @@ export default function Home() {
 
 
     const sensoresData = [
-        {
-            label: 'Calidad del aire',
-            value: `${datosSensores.calidadAire} ppm`,
-            estado: "Bueno",
-            icon: <AireSvg width={40} height={40} fill={"rgb(155, 153, 153)"} />,
-            borderColor: "rgb(155, 153, 153)"
-        },
-        {
-            label: 'Temperatura',
-            value: `${datosSensores.temperatura} °C`,
-            estado: "Normal",
-            icon: <TermostatoSvg width={40} height={40} fill={"rgb(255, 174, 0)"} />,
-            borderColor: "rgb(255, 174, 0)"
+        (() => {
+            const { estado, color } = getAireStatus(datosSensores.calidadAire)
+            return {
+                label: 'Calidad del aire',
+                value: `${datosSensores.calidadAire} ppm`,
+                estado: estado,
+                icon: <AireSvg width={40} height={40} fill={color} />,
+                borderColor: color
+            }
 
-        },
-        {
-            label: 'Humedad',
-            value: `${datosSensores.humedad} %`,
-            estado: "Normal",
-            icon: <GotaSvg width={40} height={40} fill={"rgb(0, 89, 255)"} />,
-            borderColor: "rgb(0, 89, 255)"
-        }
+        })(),
+        (() => {
+            const {estado, color} = getTemperaturaStatus(datosSensores.temperatura);
+            return {
+                label: 'Temperatura',
+                value: `${datosSensores.temperatura} °C`,
+                estado: estado,
+                icon: <TermostatoSvg width={40} height={40} fill={color} />,
+                borderColor: color
+
+            }
+        })(),
+        (() => {
+            const { estado, color } = getHumedadStatus(datosSensores.humedad);
+            return {
+                label: 'Humedad',
+                value: `${datosSensores.humedad} %`,
+                estado: estado,
+                icon: <GotaSvg width={40} height={40} fill={color} />,
+                borderColor: color
+
+            }
+        })(),
     ]
 
-    const verPorSelector = [
-        {
-            label: "Gráficos normales"
-        },
-        {
-            label: "Gráficos estadísticos"
-        }
-    ]
 
     useEffect(() => {
         if (!mensaje) return;
 
         const data: sensorData = JSON.parse(mensaje);
-        console.log("Mensaje recibido:", data);
         if (data.operacion === "enviar_datos_sensor") {
             const { sensor, valor } = data.datos;
             if (sensor === "aire") {
@@ -104,16 +107,13 @@ export default function Home() {
 
                 <View style={styles.sensoresContainer}>
                     {sensoresData.map((data, index) => (
-                        <TouchableOpacity key={index} style={[styles.sensorCard, { borderColor: data.borderColor }]}>
-
-                            <Text
-                                style={{
-                                    fontSize: 20,
-                                    fontWeight: "bold"
-                                }}
-                            >
-                                {data.label}
-                            </Text>
+                        <TouchableOpacity key={index} style={[styles.sensorCard, { borderColor: data.borderColor }]}
+                            onPress={() => {
+                                if (Platform.OS === "android") {
+                                    ToastAndroid.show(`VALOR DEL SENSOR: ${data.value}`, ToastAndroid.SHORT)
+                                }
+                            }}
+                        >
 
                             <View style={styles.iconAndValueContainer}>
                                 {data.icon}
@@ -126,25 +126,38 @@ export default function Home() {
                                 </Text>
                             </View>
 
-                            <View style={styles.estadoContainer}>
-
+                            <View style={{
+                                flexDirection: "column",
+                            }}>
                                 <Text
                                     style={{
                                         fontSize: 20,
                                         fontWeight: "bold"
                                     }}
                                 >
-                                    Estado:
+                                    {data.label}
                                 </Text>
 
-                                <Text
-                                    style={{
-                                        fontSize: 20,
-                                    }}
-                                >
-                                    {data.estado}
-                                </Text>
+                                <View style={styles.estadoContainer}>
 
+                                    <Text
+                                        style={{
+                                            fontSize: 20,
+                                            fontWeight: "bold"
+                                        }}
+                                    >
+                                        Estado:
+                                    </Text>
+
+                                    <Text
+                                        style={{
+                                            fontSize: 20,
+                                        }}
+                                    >
+                                        {data.estado}
+                                    </Text>
+
+                                </View>
                             </View>
 
                         </TouchableOpacity>
@@ -164,7 +177,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     subtitulo: {
-        fontSize: 20,
+        fontSize: 25,
         fontWeight: "bold",
         padding: 10,
         marginTop: 20,
@@ -186,7 +199,7 @@ const styles = StyleSheet.create({
         gap: 10,
     },
     sensoresContainer: {
-        flexDirection: "row",
+        flexDirection: "column",
         flexWrap: "wrap",
         gap: 20,
         justifyContent: "center",
@@ -198,14 +211,16 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderRadius: 5,
         elevation: 10,
-        flexDirection: "column",
+        flexDirection: "row",
         alignItems: "center",
+        justifyContent: "space-between",
         borderWidth: 3,
+        width: 300
     },
     iconAndValueContainer: {
         paddingTop: 10,
         paddingBottom: 10,
-        flexDirection: "row",
+        flexDirection: "column",
         alignItems: "center",
         gap: 10
     },

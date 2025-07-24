@@ -3,9 +3,11 @@ import { backendFetch } from "./interceptor";
 import * as SecureStore from "expo-secure-store";
 import { LoginResponse } from "../types";
 import { useWebsocket } from "../contexts/WebsocketContext";
+import { BACKEND_URL } from "@env";
 
 export const iniciarSesion = async (cedula: number) => {
     try {
+        console.log(BACKEND_URL)
         const response = await backendFetch.post<LoginResponse>(
             "api/usuarios/iniciar-sesion",
             { cedula }
