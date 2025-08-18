@@ -7,7 +7,8 @@ type WebsocketContextType = {
     websocket: WebSocket | null;
     mensaje: string;
     logueado: boolean; // solo boolean
-    setLogueado: React.Dispatch<React.SetStateAction<boolean>>; // obligatorio el setter
+    setLogueado: React.Dispatch<React.SetStateAction<boolean>>;
+    enviarMensaje: (mensaje: string) => void;
 };
 
 
@@ -29,7 +30,7 @@ export const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             const token = await SecureStore.getItemAsync("access_token");
             if (!token) return;
 
-            websocket.current = new WebSocket(`ws://192.168.1.111:8000/api/sensores/ws?tipo=usuario&token=${token}`);
+            websocket.current = new WebSocket(`${WEBSOCKET_URL}api/sensores/ws?tipo=usuario&token=${token}`);
 
             websocket.current.onopen = () => {
                 console.log("Conectado al WebSocket");
@@ -50,8 +51,14 @@ export const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     }, [logueado])
 
+    const enviarMensaje = (mensaje: string) => {
+        if (websocket.current && websocket.current.readyState === WebSocket.OPEN) {
+            websocket.current.send(mensaje);
+        }
+    }
+
     return (
-        <WebsocketContext.Provider value={{ conectado, websocket: websocket.current, mensaje, logueado: logueado, setLogueado }}>
+        <WebsocketContext.Provider value={{ conectado, websocket: websocket.current, mensaje, logueado: logueado, setLogueado, enviarMensaje }}>
             {children}
         </WebsocketContext.Provider>)
 }

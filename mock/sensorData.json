@@ -1,0 +1,25 @@
+{
+    "encabezados": [
+        "HORA",
+        "VALOR",
+        "ESTADO"
+    ],
+    "datos": [
+        {
+            "hora": "19:30hs",
+            "valor": "200ppm",
+            "estado": "OPTIMO"
+        },
+
+        {
+            "hora": "20:00hs",
+            "valor": "150ppm",
+            "estado": "REGULAR"
+        },
+        {
+            "hora": "20:00hs",
+            "valor": "150ppm",
+            "estado": "REGULAR"
+        }
+    ]
+}

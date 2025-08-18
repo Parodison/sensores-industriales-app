@@ -10,3 +10,24 @@ export interface sensorData {
         valor: number;
     }
 }
+
+
+export interface datosRegistro {
+    encabezados: string[],
+    datos: {
+        hora: string;
+        valor: string;
+        estado: string;
+    }[]
+}
+
+export interface datosSensorRecibido {
+    sensor: string;
+    valor: number;
+    timestamp: string;
+}
+
+export interface sensorrData {
+    mensaje: string;
+    datos: datosSensorRecibido[];
+}

@@ -7,6 +7,7 @@ import GotaSvg from '../../assets/svg/gota.svg';
 import { useWebsocket } from '../../contexts/WebsocketContext';
 import { sensorData } from '../../types';
 import { getAireStatus, getHumedadStatus, getTemperaturaStatus } from '../../lib/sensorStatusHandler';
+import { useRouter } from 'expo-router';
 
 interface DatosSensores {
     calidadAire: number;
@@ -22,6 +23,7 @@ export default function Home() {
         temperatura: 0,
         humedad: 0,
     });
+    const router = useRouter();
 
 
     const sensoresData = [
@@ -162,8 +164,18 @@ export default function Home() {
 
                         </TouchableOpacity>
                     ))}
-
+                    
                 </View>
+                <TouchableOpacity
+                    style={styles.historialButton}
+                    onPress={() => router.push('home/historial-estadistico')}
+                >
+                    <Text 
+                    style={styles.historialButtonText}
+                    >
+                        Ver Historial Estadistico
+                    </Text>
+                </TouchableOpacity>
             </View>
         </>
     );
@@ -175,6 +187,7 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         backgroundColor: '#fff',
         alignItems: 'center',
+        gap: 20
     },
     subtitulo: {
         fontSize: 25,
@@ -228,5 +241,17 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 10
+    },
+    historialButton: {
+        marginTop: 40,
+        borderWidth: 1,
+        padding: 10,
+        borderRadius: 50,
+        elevation: 3,
+        backgroundColor: "white"
+    },
+    historialButtonText: {
+        fontWeight: "bold",
+        fontSize: 25,
     }
 });

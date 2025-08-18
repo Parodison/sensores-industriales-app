@@ -12,7 +12,6 @@ export const getAireStatus = (ppm: number) => {
             color: 'rgb(255, 165, 0)'
         };
     } else {
-        Vibration.vibrate(3000);
         return {
             estado: 'Malo',
             color: 'rgb(255, 0, 0)'
@@ -32,7 +31,6 @@ export const getTemperaturaStatus = (temperatura: number) => {
             color: 'rgb(255, 165, 0)'
         };
     } else {
-        Vibration.vibrate(300);
         return {
             estado: 'Mala',
             color: 'rgb(255, 0, 0)'
