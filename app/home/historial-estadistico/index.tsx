@@ -1,28 +1,38 @@
 import { Header } from "../../../components/Header"
-import { View, Text, StyleSheet, ScrollView } from "react-native"
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native"
 import { LineChart } from "react-native-chart-kit"
 import { Dimensions } from "react-native";
-import { useWebsocket } from "../../../contexts/WebsocketContext";
-import sensorDataJson from "../../../mock/sensorData.json"
 import { useEffect, useState } from "react";
 import { datosSensorRecibido, sensorrData } from "../../../types";
+import { backendFetch } from "../../../lib/interceptor";
+import { formatearFecha } from "../../../lib/utils";
+import FlechaAbajo from "../../../assets/svg/flecha-abajo.svg"
+
+const sensoresSeleccionables = [
+        {label: 'Aire', value: 'aire'},
+        {label: 'Temperatura', value: 'temperatura'},
+        {label: 'Húmedad', value: 'humedad'},
+    ]
 
 export default function HistorialEstadistico() {
     const screenWidth = Dimensions.get('window').width;
-    const { enviarMensaje, mensaje } = useWebsocket();
     const [sensorData, setSensorData] = useState<datosSensorRecibido[]>([]);
+    const [sensorSeleccionado, setSensorSeleccionado] = useState(sensoresSeleccionables[0])
+    const [selectorAbierto, setSelectorAbierto] = useState(false);
+    
 
     useEffect(() => {
-        enviarMensaje(JSON.stringify({
-            operacion: "obtener_historial_monitoreo",
-            sensor: "aire"
-        }))
-        const mensajeDatosSensor: sensorrData = JSON.parse(mensaje);
+        const obtenerDatosSensor = async () => {
+            const response = await backendFetch.get<sensorrData>('api/sensores/obtener-historial-sensor', {
+                params: {
+                    sensor: 'aire'
+                }
+            })
+            setSensorData(response.data.datos)
 
-        if (mensajeDatosSensor.mensaje === "Datos de sensor obtenidos") {
-            setSensorData(mensajeDatosSensor.datos)
-            console.log(mensajeDatosSensor.datos)
         }
+        obtenerDatosSensor()
+
     }, [])
 
     const data = {
@@ -67,7 +77,34 @@ export default function HistorialEstadistico() {
                     />
                 </View>
                 <View>
-                    <Text>Line chart</Text>
+                    <View style={styles.seleccionSensorContainer}>
+                        <Text style={{
+                            fontSize: 20,
+                            fontWeight: 'bold',
+                        }}>
+                            Seleccionar sensor:
+                        </Text>
+                        <TouchableOpacity 
+                            style={styles.sensorSelector}
+                            onPress={() => {
+                                setSelectorAbierto(!selectorAbierto)
+                                
+                                
+                            }}
+                        >
+                            
+                            
+                            <Text
+                                style={{
+                                    flex: 1,
+                                    textAlign: 'center',
+                                    fontSize: 18
+                                }}
+                            >{sensorSeleccionado.label}</Text>
+                            <FlechaAbajo fill={'rgba(122, 122, 122, 1)'}/>
+                            
+                        </TouchableOpacity>
+                    </View>
                     <LineChart
                         data={data}
                         width={screenWidth - 32} // padding lateral
@@ -116,19 +153,22 @@ export default function HistorialEstadistico() {
 
                             <View style={styles.cuerpoTabla}>
                                 <ScrollView>
-                                    {sensorData.map((dato, indice) => (
-                                        <View style={styles.filaTabla}>
-                                            <Text key={indice} style={styles.textoCuerpo}>
-                                                {dato.timestamp}
-                                            </Text>
-                                            <Text style={styles.textoCuerpo}>
-                                                {dato.valor}
-                                            </Text>
-                                            <Text style={styles.textoCuerpo}>
-                                                {dato.sensor}
-                                            </Text>
-                                        </View>
-                                    ))}
+                                    {sensorData.map((dato, indice) => {
+                                        formatearFecha(dato.timestamp)
+                                        return (
+                                            <View style={styles.filaTabla} key={indice}>
+                                                <Text key={indice} style={styles.textoCuerpo}>
+                                                    {formatearFecha(dato.timestamp)}
+                                                </Text>
+                                                <Text style={styles.textoCuerpo}>
+                                                    {dato.valor}
+                                                </Text>
+                                                <Text style={styles.textoCuerpo}>
+                                                    {dato.sensor}
+                                                </Text>
+                                            </View>
+                                        )
+                                    })}
                                 </ScrollView>
                             </View>
 
@@ -146,8 +186,24 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         flexDirection: "column",
+        
+    },
+    seleccionSensorContainer: {        
+        flexDirection: 'row',
         padding: 10,
-        marginTop: 20
+        alignItems: 'center',
+        gap: 10,
+    },
+    sensorSelector: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 10,
+        borderWidth: 1,
+        padding: 3,
+        width: 100,
+        borderRadius: 10,
+        borderColor: 'rgba(154, 154, 154, 1)'
     },
     subtitulo: {
         fontSize: 25,
@@ -196,7 +252,7 @@ const styles = StyleSheet.create({
     cuerpoTabla: {
         flexDirection: "column",
         height: 260,
-        
+
         overflow: 'scroll',
     },
     filaTabla: {
