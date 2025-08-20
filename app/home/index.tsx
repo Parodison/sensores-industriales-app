@@ -4,15 +4,17 @@ import { useState, useEffect, useMemo } from 'react';
 import AireSvg from '../../assets/svg/aire.svg';
 import TermostatoSvg from '../../assets/svg/termostato.svg';
 import GotaSvg from '../../assets/svg/gota.svg';
+import PolvoSvg from '../../assets/svg/polvo.svg'
 import { useWebsocket } from '../../contexts/WebsocketContext';
 import { sensorData } from '../../types';
-import { getAireStatus, getHumedadStatus, getTemperaturaStatus } from '../../lib/sensorStatusHandler';
+import { getAireStatus, getHumedadStatus, getPolvoStatus, getTemperaturaStatus } from '../../lib/sensorStatusHandler';
 import { useRouter } from 'expo-router';
 
 interface DatosSensores {
     calidadAire: number;
     temperatura: number;
     humedad: number;
+    polvo: number;
 }
 
 
@@ -22,6 +24,7 @@ export default function Home() {
         calidadAire: 0,
         temperatura: 0,
         humedad: 0,
+        polvo: 0,
     });
     const router = useRouter();
 
@@ -60,6 +63,17 @@ export default function Home() {
 
             }
         })(),
+        (() => {
+            const { estado, color } = getPolvoStatus(datosSensores.polvo)
+            return {
+                label: 'Polvo',
+                value: `${datosSensores.polvo} µg/m³`,
+                estado: estado,
+                icon: <PolvoSvg width={40} height={40} fill={color} />,
+                borderColor: color
+
+            }
+        })(),
     ]
 
 
@@ -85,6 +99,11 @@ export default function Home() {
                 setDatosSensores(prev => ({
                     ...prev,
                     humedad: valor
+                }));
+            } else if (sensor === "polvo") {
+                setDatosSensores(prev => ({
+                    ...prev,
+                    polvo: valor
                 }));
             }
         }
@@ -243,7 +262,6 @@ const styles = StyleSheet.create({
         gap: 10
     },
     historialButton: {
-        marginTop: 40,
         borderWidth: 1,
         padding: 10,
         borderRadius: 50,

@@ -10,7 +10,9 @@ export function formatearFecha(fechaStr: string) {
     const hora = String(fecha.getHours()).padStart(2, "0")
     const minutos = String(fecha.getMinutes()).padStart(2, "0")
     
-    const fechaFormateada = `${dia}/${mes}/${anho} ${hora}:${minutos}`
+    //const fechaFormateada = `${dia}/${mes}/${anho} ${hora}:${minutos}`
     
-    return fechaFormateada
+    return {
+        dia, mes, anho, hora, minutos
+    }
 }
