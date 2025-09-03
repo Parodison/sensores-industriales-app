@@ -17,11 +17,14 @@
       "supportsTablet": true
     },
     "android": {
+      "permissions": ["INTERNET"],
+      "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.parodison.sensoresiotapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -29,6 +32,12 @@
     "plugins": [
       "expo-router",
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "6bdf1d17-2313-401a-b525-aa1a2dc893e3"
+      }
+    }
   }
 }
