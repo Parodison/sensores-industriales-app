@@ -1,6 +1,7 @@
 import { Header } from "../../../components/Header"
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, FlatList } from "react-native"
 import { LineChart } from "react-native-chart-kit"
+import { ChartConfig } from "react-native-chart-kit/dist/HelperTypes";
 import { Dimensions } from "react-native";
 import { useEffect, useState } from "react";
 import { datosSensorRecibido, sensorrData } from "../../../types";
@@ -45,20 +46,16 @@ export default function HistorialEstadistico() {
         ],
     };
 
-    const chartConfig = {
-        backgroundColor: '#ffffff',
-        backgroundGradientFrom: '#fb8c00',
-        backgroundGradientTo: '#ffa726',
-        decimalPlaces: 1, // opcional, número de decimales
+    const chartConfig: ChartConfig = {
+        backgroundGradientFrom: '#5c5c5cff',
+        backgroundGradientTo: '#838383ff',
+        decimalPlaces: 2, // opcional, número de decimales
         color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-        labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-        style: {
-            borderRadius: 16,
-        },
+        
         propsForDots: {
-            r: '6',
+            r: '5',
             strokeWidth: '2',
-            stroke: '#ffa726',
+            stroke: '#757575ff',
         },
     };
 
@@ -136,10 +133,9 @@ export default function HistorialEstadistico() {
                         width={screenWidth - 32} // padding lateral
                         height={220}
                         chartConfig={chartConfig}
-                        bezier // para curvas suaves (opcional)
                         style={{
                             marginVertical: 8,
-                            borderRadius: 16,
+                            borderRadius: 5,
                         }}
                     />
                 </View>
