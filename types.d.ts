@@ -1,3 +1,5 @@
+import { LineChartData } from "react-native-chart-kit/dist/line-chart/LineChart";
+
 export interface LoginResponse {
     access_token: string;
     refresh_token: string;
@@ -24,10 +26,11 @@ export interface datosRegistro {
 export interface datosSensorRecibido {
     sensor: string;
     valor: number;
-    timestamp: string;
+    fecha_lectura: string;
 }
 
-export interface sensorrData {
+export interface SensorDataResponse {
     mensaje: string;
     datos: datosSensorRecibido[];
+    line_chart: LineChartData
 }
