@@ -10,7 +10,10 @@ export const iniciarSesion = async (cedula: number) => {
         console.log(BACKEND_URL)
         const response = await backendFetch.post<LoginResponse>(
             "api/usuarios/iniciar-sesion",
-            { cedula }
+            { cedula },
+            {
+                timeout: 10000
+            }
         )
         
         await SecureStore.setItemAsync("access_token", response.data.access_token);

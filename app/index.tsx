@@ -8,6 +8,7 @@ import { StatusBar } from 'react-native';
 import { InterText as Text } from '../components/InterText';
 import CTNLogo from "../assets/Ctn_new_logo-removebg-preview.png"
 import EIKLogo from "../assets/eik.png"
+import SolarisLogo from "../assets/solaris-logo.png"
 import { InterTextInput } from '../components/InterTextInput';
 
 export default function Home() {
@@ -21,13 +22,15 @@ export default function Home() {
     const handleLogin = async () => {
         setIniciandoSesion(true);
         const inicioExitoso = await iniciarSesion(Number(cedula));
-        setIniciandoSesion(false);
+
         if (inicioExitoso) {
             console.log("Inicio de sesión exitoso");
+            setLogueado(true);
+            router.replace("/home");
         }
-        setLogueado(true);
+
         setIniciandoSesion(false);
-        router.replace("/home");
+
     };
 
     return (
@@ -44,6 +47,11 @@ export default function Home() {
                             source={EIKLogo}
                             style={{ width: 120, height: 120, backgroundColor: 'transparent' }}
                             resizeMode='cover'
+                        />
+                        <Image
+                            source={SolarisLogo}
+                            style={{ width: 120, height: 120, }}
+                            resizeMode="none"
                         />
                     </View>
                     <Text style={{ fontSize: 30, marginTop: 20, color: "#5f5f5fff" }} type='bold'>

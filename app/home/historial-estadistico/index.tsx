@@ -61,7 +61,7 @@ export default function HistorialEstadistico() {
 
     return (
         <>
-            <Header />
+            <Header backButton={true}/>
             <View style={styles.container}>
                 <View style={{ flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
                     <Text style={styles.subtitulo}>HISTORIAL ESTADISTICO</Text>

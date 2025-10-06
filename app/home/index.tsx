@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, Platform, ToastAndroid } from 'react-native';
+import {ScrollView, StyleSheet, Text, View, TouchableOpacity, Platform, ToastAndroid } from 'react-native';
 import { Header } from '../../components/Header';
 import { useState, useEffect, useMemo } from 'react';
 import AireSvg from '../../assets/svg/aire.svg';
@@ -76,7 +76,6 @@ export default function Home() {
         })(),
     ]
 
-
     useEffect(() => {
         if (!mensaje) return;
 
@@ -114,7 +113,7 @@ export default function Home() {
     return (
         <>
             <Header />
-            <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.container}>
                 <View style={{ flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
                     <Text style={styles.subtitulo}>DATOS EN TIEMPO REAL</Text>
                     <View
@@ -128,7 +127,7 @@ export default function Home() {
 
                 <View style={styles.sensoresContainer}>
                     {sensoresData.map((data, index) => (
-                        <TouchableOpacity key={index} style={[styles.sensorCard, { borderColor: data.borderColor }]}
+                        <TouchableOpacity activeOpacity={0.7} key={index} style={[styles.sensorCard, { borderColor: data.borderColor }]}
                             onPress={() => {
                                 if (Platform.OS === "android") {
                                     ToastAndroid.show(`VALOR DEL SENSOR: ${data.value}`, ToastAndroid.SHORT)
@@ -195,14 +194,13 @@ export default function Home() {
                         Ver Historial Estadistico
                     </Text>
                 </TouchableOpacity>
-            </View>
+            </ScrollView>
         </>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         flexDirection: "column",
         backgroundColor: '#fff',
         alignItems: 'center',
