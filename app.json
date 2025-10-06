@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "sensores-iot-app",
+    "name": "Solaris",
     "slug": "sensores-iot-app",
     "version": "1.0.0",
     "scheme": "sensores-iot",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/solaris-logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/solaris-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -22,15 +22,12 @@
         "INTERNET"
       ],
       "usesCleartextTraffic": true,
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
+      
       "edgeToEdgeEnabled": true,
       "package": "com.parodison.sensoresiotapp"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/solaris-logo.png"
     },
     "plugins": [
       "expo-router",

@@ -33,7 +33,7 @@ export const InterTextInput = (props: InterTextInputProps) => {
             {props.icon &&
                 <SvgIcon width={45} height={45} fill={"#585858ff"} style={{backgroundColor: "#bbbbbbff", padding: 20, marginRight: 10}}/>
             }
-            <TextInput placeholder={props.placeholder} {...props} style={[{ fontFamily }, props.style]}></TextInput>
+            <TextInput placeholderTextColor={"black"} placeholder={props.placeholder} {...props} style={[{ fontFamily, color: "black" }, props.style]}></TextInput>
         </View>
     );
 }
