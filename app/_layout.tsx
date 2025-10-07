@@ -1,10 +1,18 @@
-import { Slot } from 'expo-router';
+import { Slot, Stack } from 'expo-router';
 import { View } from 'react-native';
+import { WebsocketProvider } from '../contexts/WebsocketContext';
 
 export default function Layout() {
   return (
-    <View style={{ flex: 1 }}>
-      <Slot />
-    </View>
+    <WebsocketProvider>
+      <View style={{ flex: 1 }}>
+        <Stack
+          screenOptions={{
+            animation: "slide_from_right",
+            headerShown: false,
+          }}
+        />
+      </View>
+    </WebsocketProvider>
   );
 }
