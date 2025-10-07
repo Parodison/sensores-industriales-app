@@ -1,6 +1,6 @@
 import { useFonts, Inter_400Regular, Inter_700Bold } from "@expo-google-fonts/inter";
 import { StyleProp, TextInputProps, TextProps, TextStyle, View } from "react-native";
-import { TextInput } from "react-native";
+import { TextInput, Platform } from "react-native";
 import { ImageSourcePropType } from "react-native";
 import { SvgProps } from "react-native-svg";
 
@@ -31,7 +31,7 @@ export const InterTextInput = (props: InterTextInputProps) => {
     return (
         <View style={{flexDirection: "row", alignItems: "center"}}>
             {props.icon &&
-                <SvgIcon width={45} height={45} fill={"#585858ff"} style={{backgroundColor: "#bbbbbbff", padding: 20, marginRight: 10}}/>
+                <SvgIcon width={45} height={45} fill={"#585858ff"} style={{backgroundColor: "#bbbbbbff", padding: Platform.OS == "web" ? 0 : 20, marginRight: 10}}/>
             }
             <TextInput placeholderTextColor={"black"} placeholder={props.placeholder} {...props} style={[{ fontFamily, color: "black" }, props.style]}></TextInput>
         </View>

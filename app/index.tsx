@@ -1,4 +1,4 @@
-import { StyleSheet, Image, View, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import {Platform ,StyleSheet, Image, View, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import { useEffect, useState } from 'react';
 import CedulaSvg from '../assets/svg/cedula.svg'
 import { iniciarSesion } from '../lib/iniciarSesion';
@@ -26,7 +26,12 @@ export default function Home() {
         if (inicioExitoso) {
             console.log("Inicio de sesión exitoso");
             setLogueado(true);
-            router.replace("/home");
+            if (Platform.OS === "web") {
+                router.push("/home");
+            } else {
+                router.replace("/home");
+            }
+            
             setIniciandoSesion(false);
         }
 
@@ -52,7 +57,7 @@ export default function Home() {
                         <Image
                             source={SolarisLogo}
                             style={{ width: 120, height: 120, }}
-                            resizeMode="none"
+                            resizeMode={Platform.OS == "web" ? "contain" : "none"}
                         />
                     </View>
                     <Text style={{ fontSize: 30, marginTop: 20, color: "#5f5f5fff" }} type='bold'>
@@ -121,7 +126,9 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         backgroundColor: '#e6e6e6ff',
         justifyContent: "space-between",
-        alignItems: "center"
+        alignItems: "center",
+        maxWidth: 600,
+        alignSelf: "center"
     },
     welcomeInfo: {
         paddingTop: 50,
