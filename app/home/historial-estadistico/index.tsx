@@ -156,7 +156,7 @@ export default function HistorialEstadistico() {
                     />
                     <View style={styles.tablaSensor}>
                         <Text style={styles.fechaSensor}>
-                            07/08/2025
+                            08/10/2025
                         </Text>
                         <View style={styles.contenidoTabla}>
                             <View style={styles.encabezadoTabla}>

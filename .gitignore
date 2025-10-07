@@ -39,3 +39,4 @@ yarn-error.*
 
 prueba.ts
 prueba.js
+*.apk

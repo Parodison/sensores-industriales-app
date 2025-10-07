@@ -30,7 +30,7 @@ export const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             const token = await SecureStore.getItemAsync("access_token");
             if (!token) return;
 
-            websocket.current = new WebSocket(`${WEBSOCKET_URL}api/sensores/ws?tipo=usuario&token=${token}`);
+            websocket.current = new WebSocket(`${WEBSOCKET_URL}/api/sensores/ws?tipo=usuario&token=${token}`);
 
             websocket.current.onopen = () => {
                 console.log("Conectado al WebSocket");

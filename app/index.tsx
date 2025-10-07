@@ -27,9 +27,10 @@ export default function Home() {
             console.log("Inicio de sesión exitoso");
             setLogueado(true);
             router.replace("/home");
+            setIniciandoSesion(false);
         }
 
-        setIniciandoSesion(false);
+        
 
     };
 
